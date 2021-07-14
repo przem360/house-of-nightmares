@@ -41,15 +41,14 @@ reset
  dim sounda = f
  dim soundb = g
 
- rem n{1} to zycie przeciwnika
- rem m jest chyba powiazany ze scianami
- rem z to zycie gracza
- rem l{2} to numer pomieszczenia
- rem k to numer pomieszczenia
- rem l{3} 0 pierwsze wejscie na nowy lewel 1 - level byl odwiedzony i przeciwnik zabity
+ rem n{1} health of current enemy
+ rem z health of the player
+ rem l{2} room number
+ rem k room number
+ rem if l{3} = 0 indicates first entry to room,  1 - player already have been in this room and have killed the enemy
  rem nowy lewel gdy player0x>140
- rem j{1} - czy joy ruszony
- rem g - licznik uderzen przy rozbijaniu sciany  w lvl1
+ rem j{1} - if joy was moved
+ rem g - hit counter for breaking wall in lvl1
 
  rem  *  Volume off
  AUDV0=0
@@ -88,7 +87,7 @@ GotMusic
  if joy0fire || joy1fire then AUDV0=0: AUDV1=0: goto skiptitle
  goto title
 skiptitle
- rem level_0 tutaj
+ rem level_0
  x=50
  y=20
  v=50
@@ -106,7 +105,7 @@ skiptitle
 end
 
 
- rem oryg player0
+ rem player0
 
  player1color:
  $62
@@ -120,7 +119,7 @@ end
  $62
 end
  lives=96
- rem oryg player1
+ rem player1
 
  COLUBK = $F2
  missile0height = 4  : missile0y = 255
@@ -152,11 +151,11 @@ skip
  if joy0up then soundb = 50
  rem if joy0fire then missile0y=player0y-2:missile0x=player0x+4
  if !joy0fire then missile0x=0:missile0y=0:e=0
- rem znikanie pocisku
+ rem remove a missile
  if joy0fire && c{3} then missile0x=player0x-10-e:missile0y=player0y-5:missile0height=1
- rem strzal w lewo
+ rem shooting in left direction
  if joy0fire && c{4} then missile0x=player0x+12+e:missile0y=player0y-5:missile0height=1
- rem strzal w prawo
+ rem shooting in right direction
  if joy0fire && c{1} then missile0x=player0x+5:missile0y=player0y-10-e
  if joy0fire && c{2} then missile0x=player0x+5:missile0y=player0y+3+e
 
@@ -305,7 +304,7 @@ end
  if a=20 then a=0
  e=e+1
  if e>120 then e=0
- rem l{3} - czy zabity?
+ rem l{3} - killed off?
  if collision(missile0,player1) then gosub scored
  if collision(missile0,player1) && k=0 && n>0 then n=n-1
  if collision(missile0,player1) && k=0 && n<=0 then l{3}=1:v=255:w=255:player1x=255:player1y=255:missile0y=255
@@ -324,16 +323,16 @@ end
  if z<1 then goto you_died
 
  if m = 1 && collision(player0,playfield) then y = y + 5 : goto skipmove
- rem gorna sciana
+ rem upper wall
 
  if m = 2 && collision(player0,playfield) then x = x + 5  : goto skipmove
- rem lewa sciana
+ rem left wall
 
  if m = 3 && collision(player0,playfield) then y = y - 5 : goto skipmove
- rem dolna sciana
+ rem bottom wall
 
  if m = 4 && collision(player0,playfield) then x = x - 5 : goto skipmove
- rem prawa sciana: zwiekszenie odbicia o 1px ze wzgledu na glicz
+ rem right wall: move player by 1px because of weird glitch
 
  if !joy0up && !joy0down && !joy0left && !joy0right then j{1}=0
  if joy0up && !collision(player0,playfield) then y = y - 1 : m = 1 : c{1}=1:c{2}=0:c{3}=0:c{4}=0:c{5}=0:c{6}=0:c{7}=0:c{0}=0 : j{1}=1: goto skipmove
@@ -341,7 +340,7 @@ end
  if joy0down  && !collision(player0,playfield) then y = y + 1  : m = 3 :c{1}=0:c{2}=1:c{3}=0:c{4}=0:c{5}=0:c{6}=0:c{7}=0:c{0}=0: j{1}=1: goto skipmove
  if joy0right  && !collision(player0,playfield) then x = x + 1 :  m = 4 : REFP0 = 0 :c{1}=0:c{2}=0:c{3}=0:c{4}=1:c{5}=0:c{6}=0:c{7}=0:c{0}=0: j{1}=1: goto skipmove
 
- rem jezeli x>140 to nowe pomieszczenie - nowa pozycja przeciwnika - nowe zycie przeciwnika
+ rem if x>140 to draw new room - new position of an enemy - reset health of an enemy
  if k=0 && x>140 then k=1:x=20:y=20:v=50:w=70
  if k=1 && l{4} then n=0: v=255: w=255
  if k=1 && !l{4} then n=1
@@ -361,9 +360,9 @@ end
  if k=5 && player0y>70 then k=2: x=120: y=30: gosub level_2
  if k=5 && player0y<=15 && player0x<=100 && !l{7} then y=70: x=120
  if k=5 && player0y<=15 && player0x<=100 && l{7} then k=6:v=255:w=255:x=255:y=255: AUDV0=0: AUDV1=0: gosub final_screen
- rem y dla przeciwnika w lvl 2 ok. 20
+ rem y for an enemy in lvl 2 about 20
 
- rem rozbijanie sciany
+ rem breaking the wall
  if k=2 && x<30 && y<40 && joy0fire then g=g+1
  if k=2 && g>=3 && x<40 && y<40 then k=3: score=score+500: gosub level_3
  if k=3 && y>40 && x<20 then k=1:x=120:y=20:gosub level_1
@@ -371,7 +370,7 @@ end
  if k=4 && joy0fire then k=3:x=30:y=30: gosub level_3
  if k=4 && x>140 then k=3: x=20: y=30: gosub level_3
 
- rem end rozbijanie sciany
+ rem end breaking the wall
  t=t+1
  if t>10 then t=1
  if v < x && n>0 && k<>4 then v=v+1
