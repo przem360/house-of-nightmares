@@ -1,6 +1,7 @@
  rem ************************************************************************
- rem Haunted House by Przemyslaw Wolski 
- rem created: 2017/02/14
+ rem House of Nightmares by Przemyslaw Wolski 
+ rem v 0.1: 2017/02/14
+ rem v 0.2: 2021/07/14
  rem ************************************************************************
 
  rem set kernel_options pfheights
