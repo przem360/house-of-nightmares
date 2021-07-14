@@ -1,5 +1,5 @@
 # House of Nightmares
-Simple game for Atari 2600
+Game for Atari 2600
 ## Links
 
 
@@ -9,6 +9,8 @@ Simple game for Atari 2600
 [Bitmap kernel](http://atariage.com/forums/topic/168603-bitmap-minikernel/)
 
 [Titlescreen kernel](http://atariage.com/forums/topic/169819-the-titlescreen-kernel/)
+
+[Stella](https://stella-emu.github.io/)
 
 ## Build
 
